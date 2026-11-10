@@ -79,7 +79,7 @@ h2{font-size:clamp(29px,4vw,42px);letter-spacing:-.055em;line-height:1.08;margin
 .time-note{font-size:12px;color:var(--green);font-weight:850;background:#edf5e9;border-radius:999px;padding:8px 12px;white-space:nowrap}
 .fields{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .field{display:flex;flex-direction:column;gap:7px}
-.field label,.field-label{font-size:13px;font-weight:800}
+.field label,.field-label{font-size:13px;font-weight:800}.field-help{font-size:11px;line-height:1.4;color:var(--muted)}
 .full{grid-column:1/-1}
 input[type=text],input[type=tel],select,textarea{width:100%;border:1px solid #d4dfd5;border-radius:11px;padding:13px 14px;background:#fff;color:var(--ink);outline:none;min-height:48px}
 textarea{resize:vertical;min-height:100px}
@@ -203,7 +203,7 @@ footer a{color:var(--lime)}
   <div>
    <div class="section-no">01 / Pick your priorities</div>
    <h2>What would you actually use?</h2>
-   <p class="sub">Choose as many as you like. Your picks help show what deserves attention first.</p>
+   <p class="sub">Choose every idea you would genuinely try—not just what sounds interesting. You can select more than one.</p>
   </div>
   <div class="selection-pill" id="selectionCount" aria-live="polite">0 selected</div>
  </div>
@@ -228,7 +228,7 @@ footer a{color:var(--lime)}
  <div class="section-head">
   <div class="section-no">02 / Add your voice</div>
   <h2>Make your choices count.</h2>
-  <p class="sub">Just your name and mobile number are needed to register your interest. The rest is optional.</p>
+  <p class="sub">Two required fields. Everything else is optional. Your choices are saved only after you submit.</p>
  </div>
  <div class="formbox">
   <div class="form-intro">
@@ -238,8 +238,8 @@ footer a{color:var(--lime)}
   <form id="f">
    <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-10000px;width:1px;height:1px">
    <div class="fields">
-    <div class="field"><label for="name">Your name *</label><input id="name" name="name" type="text" required maxlength="80" autocomplete="name" placeholder="Enter your name"></div>
-    <div class="field"><label for="phone">10-digit mobile number *</label><input id="phone" name="phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{9}" maxlength="10" required autocomplete="tel-national" placeholder="Your Indian mobile number"></div>
+    <div class="field"><label for="name">Your name *</label><input id="name" name="name" type="text" required maxlength="80" autocomplete="name" placeholder="Enter your name"><span class="field-help">So we know how to address you if we follow up.</span></div>
+    <div class="field"><label for="phone">10-digit mobile number *</label><input id="phone" name="phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{9}" maxlength="10" required autocomplete="tel-national" placeholder="e.g. 9876543210" aria-describedby="phoneHelp"><span class="field-help" id="phoneHelp">Used to prevent duplicate entries and, if needed, follow up about your selected interests. No OTP is sent.</span></div>
    </div>
    <details class="optional">
     <summary>Add optional details (helps us plan better)</summary>
@@ -255,7 +255,7 @@ footer a{color:var(--lime)}
    <label class="consent"><input id="updates" type="checkbox"><span>Optional: I agree to receive occasional updates about related local launches. I can opt out later.</span></label>
    <div class="submit-row">
     <button class="btn submit-btn" id="submit" type="submit">Add my voice to Proddatur →</button>
-    <span class="form-hint">Your mobile number is used to prevent duplicate registrations. Your details are stored privately and are not shown publicly or sold.</span>
+    <span class="form-hint">Your mobile number is required to prevent duplicate registrations. Your details are stored in a private sheet, not displayed publicly and not sold. <a href="privacy.html">See how your data is handled.</a></span>
    </div>
    <div id="status" role="status" aria-live="polite"></div>
    <div class="success-share" id="successShare">
@@ -264,7 +264,7 @@ footer a{color:var(--lime)}
     <div class="share-actions"><button class="btn btn-small" type="button" onclick="shareSubmittedPicks()">Share my choices on WhatsApp ↗</button><button class="btn btn-white" type="button" onclick="copySurveyLink()">Copy survey link</button></div>
     <p id="shareFeedback" aria-live="polite" style="margin-top:10px"></p>
    </div>
-   <p class="form-hint">We are researching demand; these services are not live yet. Read the <a href="privacy.html">privacy policy</a>. For data access, correction or deletion, use the separate request form there.</p>
+   <p class="form-hint">These services are ideas being researched, not live offers. No payment is requested. For data access, correction or deletion, use the separate request form in our <a href="privacy.html">privacy policy</a>.</p>
   </form>
  </div>
 </section>
@@ -336,6 +336,7 @@ async function sharePulse(){
  }else{shareWhatsApp([]);}
 }
 
+document.getElementById("phone").addEventListener("input",event=>event.target.setCustomValidity(""));
 const selectionCount=document.getElementById("selectionCount");
 document.querySelectorAll('input[name="interest"]').forEach(input=>{
  input.addEventListener("change",()=>{
@@ -413,10 +414,13 @@ form.addEventListener("submit",async event=>{
   document.getElementById("ideas").scrollIntoView({behavior:"smooth",block:"center"});
   return;
  }
- const phone=document.getElementById("phone").value.trim();
+ const phoneField=document.getElementById("phone");
+ phoneField.setCustomValidity("");
+ const phone=phoneField.value.replace(/\D/g,"");
  if(!/^[6-9][0-9]{9}$/.test(phone)){
-  showStatus("Enter a valid 10-digit Indian mobile number.","err");
-  document.getElementById("phone").focus();
+  showStatus("Enter a valid 10-digit Indian mobile number starting with 6, 7, 8 or 9.","err");
+  phoneField.setCustomValidity("Enter a valid 10-digit Indian mobile number.");
+  phoneField.focus();
   return;
  }
  if(!document.getElementById("consent").checked){
