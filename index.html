@@ -11,58 +11,121 @@
 <div class="field"><label for="name">Your name *</label><input id="name" name="name" required maxlength="80" placeholder="Your name"></div><div class="field"><label for="phone">Mobile number *</label><input id="phone" name="phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{9}" maxlength="10" required placeholder="10-digit Indian number"></div><div class="field"><label for="age">Age group</label><select id="age"><option value="">Prefer not to say</option><option>Under 18</option><option>18–24</option><option>25–34</option><option>35–44</option><option>45+</option></select></div><div class="field"><label for="area">Area in/around Proddatur</label><input id="area" maxlength="80" placeholder="e.g. YMR Colony"></div><div class="field full"><label>How soon might you use something like this?</label><div class="choices"><label><input type="radio" name="timeline" value="Immediately"> Immediately</label><label><input type="radio" name="timeline" value="Within a month"> Within a month</label><label><input type="radio" name="timeline" value="Within 3 months"> Within 3 months</label><label><input type="radio" name="timeline" value="Just exploring"> Just exploring</label></div></div><div class="field full"><label for="price">What would you realistically pay per visit/use?</label><select id="price"><option value="">Not sure</option><option>Free only</option><option>Under ₹50</option><option>₹50–₹99</option><option>₹100–₹199</option><option>₹200–₹499</option><option>₹500+</option></select></div><div class="field full"><label for="idea">What is one thing you wish Proddatur had?</label><textarea id="idea" rows="3" maxlength="500" placeholder="Optional"></textarea></div></div>
 <label class="consent"><input id="consent" type="checkbox" required><span>I agree that Proddatur Pulse may store the details I submit and contact me about the interests I selected. I understand this is not a booking or guarantee of service. *</span></label><label class="consent"><input id="updates" type="checkbox"><span>Optional: I agree to receive occasional updates about related local launches. I can opt out later.</span></label><button class="btn" id="submit" type="submit">Submit interest</button><p class="hint">Your details will not be displayed publicly. No payment is collected.</p><div id="status" role="status"></div></form></div></section>
 <section class="wrap section"><div class="head"><div class="eyebrow">03 / What happens next</div><h2>Simple and transparent.</h2></div><div class="steps"><div class="step"><b>1. Share your interest</b><p>Select ideas and submit the short form.</p></div><div class="step"><b>2. We measure demand</b><p>We compare interest by category and area and may contact you to verify interest.</p></div><div class="step"><b>3. Test the strongest idea</b><p>If demand is sufficient, we share a proposed launch, price and date before asking for payment.</p></div></div></section></main>
-<footer><div class="wrap"><b>Proddatur Pulse</b><p>A local demand-discovery project. These services are not live yet. Registration does not guarantee availability. Add your real contact email and privacy contact before publishing.</p>© <span id="year"></span> Proddatur Pulse <a class="admin-link" href="#admin">Owner access</a></div></footer>
+<footer><div class="wrap"><b>Proddatur Pulse</b><p>A local demand-discovery project. These services are not live yet. Registration does not guarantee availability. Add your real contact email and privacy contact before publishing.</p>© <span id="year"></span> Proddatur Pulse <a class="admin-link" id="ownerSheetLink" href="#" target="_blank" rel="noopener" hidden>Owner spreadsheet</a></div></footer>
 <script>
-const API_BASE="PASTE_CLOUDFLARE_WORKER_URL_HERE";
-const f=document.getElementById("f"),status=document.getElementById("status"),submitButton=document.getElementById("submit");
-const adminApp=document.getElementById("adminApp"),publicMain=document.querySelector("main"),footer=document.querySelector("footer");
-const loginPanel=document.getElementById("loginPanel"),dashboardPanel=document.getElementById("dashboardPanel"),adminMessage=document.getElementById("adminMessage");
-const tokenKey="pp_admin_session";
+const APPS_SCRIPT_URL="PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+const OWNER_SHEET_URL="PASTE_PRIVATE_GOOGLE_SHEET_URL_HERE";
+const form=document.getElementById("f");
+const statusBox=document.getElementById("status");
+const submitButton=document.getElementById("submit");
 document.getElementById("year").textContent=new Date().getFullYear();
-function apiReady(){return API_BASE.startsWith("https://")&&!API_BASE.includes("PASTE_");}
-function publicMessage(message,kind){status.textContent=message;status.className=kind;status.style.display="block";status.scrollIntoView({behavior:"smooth",block:"nearest"});}
-function notice(message,kind){adminMessage.innerHTML='<div class="'+(kind==="success"?"admin-success":"admin-error")+'">'+esc(message)+'</div>';}
-function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-async function api(path,options={}){if(!apiReady())throw Error("The secure registration service has not been configured yet.");const headers={"content-type":"application/json",...(options.headers||{})};const token=sessionStorage.getItem(tokenKey);if(token)headers.Authorization="Bearer "+token;const res=await fetch(API_BASE+path,{...options,headers});if(res.status===401){sessionStorage.removeItem(tokenKey);if(location.hash==="#admin")showLogin();}if(!res.ok){let msg="Request failed ("+res.status+")";try{msg=(await res.json()).error||msg;}catch{}throw Error(msg);}return res;}
-f.addEventListener("submit",async e=>{
-e.preventDefault();status.style.display="none";
-const interests=[...document.querySelectorAll('input[name="interest"]:checked')].map(x=>x.value);
-if(!interests.length){publicMessage("Select at least one interest.","err");document.getElementById("ideas").scrollIntoView({behavior:"smooth"});return;}
-const phone=document.getElementById("phone").value.trim();
-if(!/^[6-9]\d{9}$/.test(phone)){publicMessage("Enter a valid 10-digit Indian mobile number.","err");return;}
-if(!document.getElementById("consent").checked){publicMessage("Please provide consent before continuing.","err");return;}
-if(!apiReady()){publicMessage("Registration is temporarily unavailable. Please try again later.","err");return;}
-const payload={name:document.getElementById("name").value.trim(),phone,age:document.getElementById("age").value,area:document.getElementById("area").value.trim(),interests,timeline:f.querySelector('input[name="timeline"]:checked')?.value||"",willingness_to_pay:document.getElementById("price").value,suggestion:document.getElementById("idea").value.trim(),consent:true,marketing_updates:document.getElementById("updates").checked,website:document.getElementById("website").value};
-submitButton.disabled=true;submitButton.textContent="Submitting…";
-try{await api("/api/register",{method:"POST",body:JSON.stringify(payload)});f.reset();publicMessage("Thank you. Your interest has been received successfully.","ok");}
-catch(error){publicMessage(error.message||"Submission failed. Please try again.","err");}
-finally{submitButton.disabled=false;submitButton.textContent="Submit interest";}
-});
-function showLogin(){loginPanel.classList.remove("admin-hidden");dashboardPanel.classList.add("admin-hidden");adminMessage.innerHTML="";}
-async function loadDashboard(){
-loginPanel.classList.add("admin-hidden");dashboardPanel.classList.remove("admin-hidden");
-const params=new URLSearchParams(),q=document.getElementById("searchInput").value.trim(),interest=document.getElementById("interestFilter").value;
-if(q)params.set("q",q);if(interest)params.set("interest",interest);
-const res=await api("/api/admin/registrations?"+params.toString());const data=await res.json();renderRows(data.registrations||[]);
-document.getElementById("resultNote").textContent="("+data.count+" shown"+(data.limited?"; latest 500":"")+")";
+
+const ownerLink=document.getElementById("ownerSheetLink");
+if(OWNER_SHEET_URL.startsWith("https://docs.google.com/spreadsheets/")){
+  ownerLink.href=OWNER_SHEET_URL;
+  ownerLink.hidden=false;
 }
-function renderRows(rows){
-const body=document.getElementById("registrationRows"),interests=new Set();rows.forEach(r=>(r.interests||[]).forEach(i=>interests.add(i)));
-document.getElementById("statTotal").textContent=rows.length;document.getElementById("statInterests").textContent=interests.size;document.getElementById("statMarketing").textContent=rows.filter(r=>r.marketing_updates===1).length;
-if(!rows.length){body.innerHTML='<tr><td colspan="8">No registrations found.</td></tr>';return;}
-body.innerHTML=rows.map(r=>'<tr><td>'+esc(r.submitted_at?new Date(r.submitted_at).toLocaleString():"")+'</td><td><b>'+esc(r.name)+'</b><br>'+esc(r.phone)+'</td><td>'+esc(r.area||"—")+'<br>'+esc(r.age||"")+'</td><td>'+esc((r.interests||[]).join(", "))+'</td><td>'+esc(r.timeline||"—")+'<br>'+esc(r.willingness_to_pay||"")+'</td><td>'+esc(r.suggestion||"—")+'</td><td>'+(r.marketing_updates===1?"Yes":"No")+'</td><td><button class="btn danger delete-row" data-id="'+Number(r.id)+'" type="button">Delete</button></td></tr>').join("");
-body.querySelectorAll(".delete-row").forEach(b=>b.addEventListener("click",async()=>{if(!confirm("Permanently delete this registration?"))return;b.disabled=true;try{await api("/api/admin/registrations/"+b.dataset.id,{method:"DELETE"});await loadDashboard();notice("Registration deleted.","success");}catch(e){notice(e.message);}}));
+function showStatus(message,kind){
+  statusBox.textContent=message;
+  statusBox.className=kind;
+  statusBox.style.display="block";
+  statusBox.scrollIntoView({behavior:"smooth",block:"nearest"});
 }
-document.getElementById("adminLoginForm").addEventListener("submit",async e=>{
-e.preventDefault();const b=document.getElementById("loginButton");b.disabled=true;b.textContent="Signing in…";
-try{const res=await fetch(API_BASE+"/api/admin/login",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({password:document.getElementById("adminPassword").value})});const data=await res.json();if(!res.ok)throw Error(data.error||"Login failed");sessionStorage.setItem(tokenKey,data.token);document.getElementById("adminPassword").value="";await loadDashboard();notice("Signed in successfully.","success");}
-catch(e){notice(e.message||"Login failed");}finally{b.disabled=false;b.textContent="Sign in";}
+function sendToGoogleSheets(payload){
+  return new Promise((resolve,reject)=>{
+    if(!APPS_SCRIPT_URL.startsWith("https://script.google.com/macros/s/")||!APPS_SCRIPT_URL.endsWith("/exec")){
+      reject(new Error("The registration form is not configured yet."));
+      return;
+    }
+    const nonce=crypto.randomUUID();
+    const frame=document.createElement("iframe");
+    frame.name="pp-submit-"+nonce;
+    frame.hidden=true;
+    frame.title="Registration submission";
+    const postForm=document.createElement("form");
+    postForm.method="POST";
+    postForm.action=APPS_SCRIPT_URL;
+    postForm.target=frame.name;
+    postForm.acceptCharset="UTF-8";
+    postForm.hidden=true;
+    const payloadInput=document.createElement("input");
+    payloadInput.type="hidden";
+    payloadInput.name="payload";
+    payloadInput.value=JSON.stringify(payload);
+    const nonceInput=document.createElement("input");
+    nonceInput.type="hidden";
+    nonceInput.name="nonce";
+    nonceInput.value=nonce;
+    postForm.append(payloadInput,nonceInput);
+    document.body.append(frame,postForm);
+    let settled=false;
+    let timer;
+    const cleanup=()=>{
+      window.removeEventListener("message",onMessage);
+      postForm.remove();
+      frame.remove();
+      clearTimeout(timer);
+    };
+    const finish=(fn,value)=>{
+      if(settled)return;
+      settled=true;
+      cleanup();
+      fn(value);
+    };
+    const onMessage=(event)=>{
+      if(event.source!==frame.contentWindow)return;
+      const data=event.data;
+      if(!data||data.type!=="PRODDATUR_PULSE_RESULT"||data.nonce!==nonce)return;
+      if(data.result&&data.result.ok)finish(resolve,data.result);
+      else finish(reject,new Error(data.result?.message||"Submission was rejected."));
+    };
+    window.addEventListener("message",onMessage);
+    timer=setTimeout(()=>finish(reject,new Error("No confirmation received. Check your connection and try again. If this continues, contact the site owner.")),30000);
+    postForm.submit();
+  });
+}
+form.addEventListener("submit",async event=>{
+  event.preventDefault();
+  statusBox.style.display="none";
+  const interests=[...document.querySelectorAll('input[name="interest"]:checked')].map(input=>input.value);
+  if(!interests.length){
+    showStatus("Select at least one interest.","err");
+    document.getElementById("ideas").scrollIntoView({behavior:"smooth"});
+    return;
+  }
+  const phone=document.getElementById("phone").value.trim();
+  if(!/^[6-9][0-9]{9}$/.test(phone)){
+    showStatus("Enter a valid 10-digit Indian mobile number.","err");
+    return;
+  }
+  if(!document.getElementById("consent").checked){
+    showStatus("Please provide consent before continuing.","err");
+    return;
+  }
+  const payload={
+    name:document.getElementById("name").value.trim(),
+    phone,
+    age:document.getElementById("age").value,
+    area:document.getElementById("area").value.trim(),
+    interests,
+    timeline:form.querySelector('input[name="timeline"]:checked')?.value||"",
+    willingness_to_pay:document.getElementById("price").value,
+    suggestion:document.getElementById("idea").value.trim(),
+    consent:true,
+    marketing_updates:document.getElementById("updates").checked,
+    website:document.getElementById("website").value
+  };
+  submitButton.disabled=true;
+  submitButton.textContent="Submitting…";
+  try{
+    const result=await sendToGoogleSheets(payload);
+    form.reset();
+    showStatus(result.message||"Your interest has been received.","ok");
+  }catch(error){
+    showStatus(error.message||"Submission failed. Please try again.","err");
+  }finally{
+    submitButton.disabled=false;
+    submitButton.textContent="Submit interest";
+  }
 });
-document.getElementById("refreshButton").addEventListener("click",()=>loadDashboard().catch(e=>notice(e.message)));
-document.getElementById("searchInput").addEventListener("input",()=>{clearTimeout(window.ppSearchTimer);window.ppSearchTimer=setTimeout(()=>loadDashboard().catch(e=>notice(e.message)),350);});
-document.getElementById("interestFilter").addEventListener("change",()=>loadDashboard().catch(e=>notice(e.message)));
-document.getElementById("logoutButton").addEventListener("click",()=>{sessionStorage.removeItem(tokenKey);showLogin();notice("Logged out.","success");});
-document.getElementById("exportButton").addEventListener("click",async()=>{try{const res=await api("/api/admin/export.csv",{method:"GET"});const blob=await res.blob(),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="proddatur-pulse-registrations.csv";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);}catch(e){notice(e.message);}});
-function route(){const isAdmin=location.hash==="#admin";adminApp.classList.toggle("admin-hidden",!isAdmin);publicMain.classList.toggle("admin-hidden",isAdmin);footer.classList.toggle("admin-hidden",isAdmin);if(isAdmin){if(sessionStorage.getItem(tokenKey))loadDashboard().catch(showLogin);else showLogin();window.scrollTo(0,0);}}
-window.addEventListener("hashchange",route);route();
 </script>
