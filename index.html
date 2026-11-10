@@ -37,20 +37,14 @@
   <p class="muted">Your responses help us understand which ideas deserve further research. No service is promised or guaranteed. If an idea is taken forward, details such as availability, provider, price and timing will be shared separately before any commitment or payment is requested.</p>
 </section>
 </main>
-<footer><div class="wrap"><b>Proddatur Pulse</b><p>A local demand-discovery project for Proddatur. These services are not live yet. Registration does not guarantee availability. Questions and privacy requests can be sent through the registration form. Read our <a href="privacy.html" style="color:#d9f36b">Privacy Policy</a>.</p>© <span id="year"></span> Proddatur Pulse · <a href="privacy.html" style="color:#d9f36b">Privacy</a> <a class="admin-link" id="ownerSheetLink" href="#" target="_blank" rel="noopener" hidden>Owner spreadsheet</a></div></footer>
+<footer><div class="wrap"><b>Proddatur Pulse</b><p>A local demand-discovery project for Proddatur. These services are not live yet. Registration does not guarantee availability. Questions and privacy requests can be sent through the registration form. Read our <a href="privacy.html" style="color:#d9f36b">Privacy Policy</a>.</p>© <span id="year"></span> Proddatur Pulse · <a href="privacy.html" style="color:#d9f36b">Privacy</a></div></footer>
 <script>
 const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbw5hzXcfCJ05lx72lNGAKaRxmLVMHzj5Dyj23C5UoPsNOSH6RN76-4tEuIJeR16DxFZ/exec";
-const OWNER_SHEET_URL="https://docs.google.com/spreadsheets/d/10SiohQdenk7ECSNV4WW61_Un5oMv9JrdR1VnEmpQ6Fk/edit?gid=0#gid=0";
 const form=document.getElementById("f");
 const statusBox=document.getElementById("status");
 const submitButton=document.getElementById("submit");
 document.getElementById("year").textContent=new Date().getFullYear();
 
-const ownerLink=document.getElementById("ownerSheetLink");
-if(OWNER_SHEET_URL.startsWith("https://docs.google.com/spreadsheets/")){
-  ownerLink.href=OWNER_SHEET_URL;
-  ownerLink.hidden=false;
-}
 function showStatus(message,kind){
   statusBox.textContent=message;
   statusBox.className=kind;
