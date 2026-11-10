@@ -11,7 +11,7 @@ The spreadsheet ID configured in apps-script/Code.gs is the existing private pro
 1. Open the private Proddatur Pulse spreadsheet using the owner Google account.
 2. Open Extensions → Apps Script.
 3. Replace the editor code with the current apps-script/Code.gs from this repository.
-4. Confirm CONFIG.SPREADSHEET_ID matches the existing private spreadsheet.
+4. Open Project Settings (gear icon) → Script Properties → Add script property. Set the property name to SPREADSHEET_ID and its value to the ID copied from your private Sheet URL. Do not commit this ID to the public repository.
 5. Save, select setupSheet, and Run it once. Approve the authorization prompt.
 6. Confirm three tabs exist: Registrations, Requests and Dashboard. Existing Registrations rows are retained; the setup routine rebuilds the Dashboard tab.
 7. Open Deploy → Manage deployments. Edit the existing Web App deployment, choose New version, and deploy.
