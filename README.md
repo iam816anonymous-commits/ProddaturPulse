@@ -1,30 +1,23 @@
 # Proddatur Pulse
 
-A public Proddatur interest-registration website with a private owner dashboard.
+Public Proddatur interest survey hosted on GitHub Pages. Anonymous visitors can submit without a Google account. Submissions are stored in the owner's private Google Sheet through Google Apps Script.
 
 ## Architecture
 
-- `index.html` — public landing page, registration form and owner dashboard at `#admin`.
-- `worker/src/index.js` — Cloudflare Worker API. Public visitors can submit; owner routes require a signed session.
-- `worker/migrations/0001_initial.sql` — D1 database schema.
-- `worker/wrangler.jsonc` — Worker and D1 binding configuration.
-- `worker/README.md` — deployment and secret setup instructions.
+- `index.html` — public landing page and interest form.
+- `apps-script/Code.gs` — Google Apps Script intake endpoint.
+- `apps-script/appsscript.json` — Apps Script runtime manifest.
+- `docs/GOOGLE_SHEETS_SETUP.md` — setup, deployment and testing guide.
+- Google Sheet — private registration store, owned by the site operator.
 
-## Current deployment status
+## Duplicate prevention
 
-The application code is committed, but live collection is **not active until the Cloudflare Worker and D1 database are provisioned and deployed**. The website intentionally does not pretend to save registrations while the API URL is unset.
+One registration per normalized 10-digit Indian mobile number. A repeated number is rejected, and the sheet is not given a second row. The duplicate check and append run under a script lock to prevent concurrent duplicate inserts. This is not identity verification; another phone number can bypass the rule.
 
-Follow [the Worker setup guide](worker/README.md). After deployment, replace `PASTE_CLOUDFLARE_WORKER_URL_HERE` in `index.html` with your Worker URL and commit the change.
+## Setup
 
-## Owner dashboard
+Follow [the Google Sheets setup guide](docs/GOOGLE_SHEETS_SETUP.md). Deploy Apps Script as a Web App that executes as the owner and is accessible to anyone. Keep the spreadsheet itself private.
 
-Open the same website with `#admin` appended to the URL. Sign in using the password configured as the Worker secret `ADMIN_PASSWORD`. The dashboard supports searching, interest filtering, deleting individual registrations and downloading a CSV export.
+## Important
 
-## Security and privacy
-
-- Never commit Cloudflare secrets, admin passwords, session secrets or real registration data.
-- The D1 database is accessed only through the Worker; the browser has no direct database credentials.
-- Admin API requests require a signed, expiring bearer token.
-- Public submissions are validated and rate-limited.
-- CORS is restricted to the GitHub Pages origin configured in the Worker.
-- Add a real privacy contact and privacy notice before launch. Collect only necessary information and honour deletion/opt-out requests.
+The site is not ready to collect real registrations until the owner completes Apps Script authorization/deployment and adds the `/exec` URL and private Sheet URL to `index.html`. Never put a Google password, OAuth token or spreadsheet data in this repository.
