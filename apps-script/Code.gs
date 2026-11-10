@@ -86,6 +86,6 @@ function safeCell_(value) {
 }
 function responsePage_(result,nonce) {
   const message = JSON.stringify({type:"PRODDATUR_PULSE_RESULT",nonce:String(nonce || ""),result:result}).replace(/</g,"\\u003c");
-  const html = '<!doctype html><html><body><script>window.top.postMessage(' + message + ',"*");<\\/script></body></html>';
+  const html = '<!doctype html><html><body><script>window.top.postMessage(' + message + ',"*");</script></body></html>';
   return HtmlService.createHtmlOutput(html).setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
