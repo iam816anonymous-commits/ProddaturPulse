@@ -73,7 +73,6 @@ function sendToGoogleSheets(payload){
       fn(value);
     };
     const onMessage=(event)=>{
-      if(event.source!==frame.contentWindow)return;
       const data=event.data;
       if(!data||data.type!=="PRODDATUR_PULSE_RESULT"||data.nonce!==nonce)return;
       if(data.result&&data.result.ok)finish(resolve,data.result);
