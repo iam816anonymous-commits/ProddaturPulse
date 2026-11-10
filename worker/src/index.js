@@ -103,7 +103,7 @@ function base64urlBytes(bytes) {
 async function sign(value, secret) {
   const key = await crypto.subtle.importKey("raw",new TextEncoder().encode(secret),{name:"HMAC",hash:"SHA-256"},false,["sign"]);
   const signature = await crypto.subtle.sign("HMAC",key,new TextEncoder().encode(value));
-  return base64url(String.fromCharCode(...new Uint8Array(signature)));
+  return base64urlBytes(new Uint8Array(signature));
 }
 async function authenticate(request, env) {
   const header = request.headers.get("Authorization") || "";
