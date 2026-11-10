@@ -5,7 +5,7 @@
  * Questions/privacy requests are stored separately and do not create registrations.
  */
 const CONFIG = {
-  SPREADSHEET_ID: "10SiohQdenk7ECSNV4WW61_Un5oMv9JrdR1VnEmpQ6Fk",
+  SPREADSHEET_ID: "",
   REGISTRATIONS_SHEET: "Registrations",
   REQUESTS_SHEET: "Requests",
   DASHBOARD_SHEET: "Dashboard",
@@ -133,8 +133,9 @@ function setupDashboard_(ss) {
 }
 
 function getSpreadsheet_() {
-  if (!CONFIG.SPREADSHEET_ID) throw new Error("Missing spreadsheet configuration.");
-  return SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  const spreadsheetId = PropertiesService.getScriptProperties().getProperty("SPREADSHEET_ID") || CONFIG.SPREADSHEET_ID;
+  if (!spreadsheetId) throw new Error("Set the SPREADSHEET_ID script property before running setup or accepting submissions.");
+  return SpreadsheetApp.openById(spreadsheetId);
 }
 function getOrCreateSheet_(ss,name) {
   return ss.getSheetByName(name) || ss.insertSheet(name);
