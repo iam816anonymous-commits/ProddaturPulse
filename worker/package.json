@@ -1,0 +1,13 @@
+{
+  "name": "proddatur-pulse-api",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:migrate:remote": "wrangler d1 migrations apply proddatur-pulse --remote"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}
