@@ -14,6 +14,12 @@ npx wrangler d1 create proddatur-pulse
 
 Copy the returned database UUID into `wrangler.jsonc`, replacing `REPLACE_WITH_DATABASE_ID`.
 
+Check the Worker JavaScript syntax before deploying:
+
+```powershell
+npm run check
+```
+
 Apply the schema:
 
 ```powershell
