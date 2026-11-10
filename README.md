@@ -1,28 +1,30 @@
 # Proddatur Pulse
 
-A one-page local interest-registration site for testing demand in Proddatur.
+A public Proddatur interest-registration website with a private owner dashboard.
 
-## Files
-- `index.html` — responsive public landing page and interest form.
-- `useless/README.md` — placeholder for a future registration-storage mechanism.
+## Architecture
 
-## Current submission behaviour — prototype only
+- `index.html` — public landing page, registration form and owner dashboard at `#admin`.
+- `worker/src/index.js` — Cloudflare Worker API. Public visitors can submit; owner routes require a signed session.
+- `worker/migrations/0001_initial.sql` — D1 database schema.
+- `worker/wrangler.jsonc` — Worker and D1 binding configuration.
+- `worker/README.md` — deployment and secret setup instructions.
 
-The previous Google Apps Script / Google Sheets backend has been removed.
+## Current deployment status
 
-The form currently validates the visitor's input and downloads a TXT copy **to that visitor's own device**. It does not send the registration to the site owner and does not create a file in this repository.
+The application code is committed, but live collection is **not active until the Cloudflare Worker and D1 database are provisioned and deployed**. The website intentionally does not pretend to save registrations while the API URL is unset.
 
-## Why the GitHub folder is not connected directly
+Follow [the Worker setup guide](worker/README.md). After deployment, replace `PASTE_CLOUDFLARE_WORKER_URL_HERE` in `index.html` with your Worker URL and commit the change.
 
-GitHub Pages is static hosting. Browser JavaScript cannot safely commit files into this repository. Doing so would require a privileged GitHub credential, and putting that credential in the public page would expose the repository to abuse.
+## Owner dashboard
 
-Also, this repository is public. Any real TXT file committed under `useless/` would be readable by everyone, including names and mobile numbers. Do not put real visitor data there.
+Open the same website with `#admin` appended to the URL. Sign in using the password configured as the Worker secret `ADMIN_PASSWORD`. The dashboard supports searching, interest filtering, deleting individual registrations and downloading a CSV export.
 
-A secure owner-only collection system requires a trusted server-side component (for example, a self-hosted server) or a backend provider. Until one is configured, do not advertise the form as an active registration collector.
+## Security and privacy
 
-## Privacy and launch checklist
-- Add a real contact email and privacy notice before publishing.
-- Collect only information needed for the stated purpose.
-- Keep contact details private and honour deletion/opt-out requests.
-- Do not sell or share contact details without separate permission.
-- This is an expression-of-interest survey, not a booking, payment or guarantee of service.
+- Never commit Cloudflare secrets, admin passwords, session secrets or real registration data.
+- The D1 database is accessed only through the Worker; the browser has no direct database credentials.
+- Admin API requests require a signed, expiring bearer token.
+- Public submissions are validated and rate-limited.
+- CORS is restricted to the GitHub Pages origin configured in the Worker.
+- Add a real privacy contact and privacy notice before launch. Collect only necessary information and honour deletion/opt-out requests.
