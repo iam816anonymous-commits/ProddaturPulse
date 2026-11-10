@@ -94,8 +94,8 @@ function constantTimeEqual(a,b) {
   for (let i=0;i<a.length;i++) result |= a.charCodeAt(i) ^ b.charCodeAt(i);
   return result === 0;
 }
-function base64url(value) {
-  const bytes = new TextEncoder().encode(value);
+function base64url(value) { return base64urlBytes(new TextEncoder().encode(value)); }
+function base64urlBytes(bytes) {
   let binary = "";
   bytes.forEach(b => binary += String.fromCharCode(b));
   return btoa(binary).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/g,"");
