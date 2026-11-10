@@ -1,49 +1,44 @@
-# Registration collection design — Google Sheets
+# Registration collection design — Proddatur Pulse
 
-## Decision
-
-Use one public GitHub Pages repository and one private Google spreadsheet. Google Apps Script is the intake endpoint.
+## Architecture
 
 - Public frontend: GitHub Pages.
 - Intake: Google Apps Script Web App, executing as the spreadsheet owner.
 - Storage: owner's private Google Sheet.
-- Visitors: anonymous; no Google login.
+- Visitors: no Google login required.
 - Owner: Google account access to the private spreadsheet.
 
-## Data flow
+## Registration flow
 
-1. Visitor fills in the public form.
-2. Browser posts a URL-encoded payload to Apps Script using a hidden iframe form target.
-3. Apps Script validates fields, normalizes the mobile number, checks the private sheet under a script lock, and appends one row.
-4. If the mobile number already exists, Apps Script rejects the submission and adds no row.
-5. Owner reviews records by opening the private Google Sheet.
+1. Visitor selects interests and submits the adult-only form.
+2. Browser sends a URL-encoded JSON payload to Apps Script through a hidden iframe.
+3. Apps Script validates the payload and normalizes the 10-digit mobile number.
+4. A script lock serializes the duplicate check and append.
+5. Duplicate mobile numbers are rejected; no second registration row is written.
+
+## Questions and privacy requests
+
+1. Visitor uses the separate request form on privacy.html.
+2. Request includes mobile number, request type and message.
+3. Apps Script writes it to the private Requests tab.
+4. It does not create a registration and does not run the duplicate-registration check.
+5. Owner verifies control of the number before disclosing, correcting or deleting data.
+
+## Private owner operations
+
+- Registrations: source records.
+- Requests: questions, suggestions, access/correction/deletion requests and optional-update opt-outs.
+- Dashboard: formula-driven totals and demand summaries by interest, area, willingness to pay and usage timeline.
 
 ## Duplicate policy
 
-One row per normalized 10-digit Indian mobile number, permanently. The lock serializes concurrent submissions so simultaneous requests with the same phone cannot both be inserted.
-
-This is not identity verification. A user can bypass it by using a different phone number. SMS OTP would be needed for stronger identity assurance.
+One registration per normalized 10-digit Indian mobile number. This is not identity verification; a different number can bypass it. OTP would be required for stronger assurance.
 
 ## Security boundaries
 
-- Spreadsheet is private and not published to the web.
-- Apps Script executes as the owner; visitors do not receive spreadsheet permissions.
-- No Google password, API key or OAuth token is shipped to the browser.
-- Input is validated and bounded; spreadsheet-formula injection is neutralized.
-- A honeypot filters basic bots.
-- The endpoint is public by design. Anyone who knows its URL can attempt requests. This design does not provide robust IP-based rate limiting, CAPTCHA or OTP.
-- Apps Script and Sheets quotas apply.
-
-## Admin access
-
-The admin data view is Google Sheets itself, protected by Google account permissions. There is no client-side admin password. The public site's owner link is only a shortcut; Google controls access.
-
-## Launch checklist
-
-- Create a private Sheet.
-- Paste its ID into `CONFIG.SPREADSHEET_ID`.
-- Run `setupSheet` and authorize.
-- Deploy Apps Script as Web App: execute as owner, access anyone.
-- Paste the `/exec` URL and private Sheet URL into the frontend.
-- Test first submission and duplicate rejection before public launch.
-- Add privacy contact, retention and deletion policy.
+- Spreadsheet remains private and is not linked from the public website.
+- Spreadsheet ID is stored in Apps Script Script Properties, not committed to public source code.
+- Apps Script executes as owner; visitors do not receive spreadsheet permissions.
+- Input is bounded and validated; formula injection is neutralized.
+- Honeypot filters basic bots; locking protects concurrent duplicate registration writes.
+- No CAPTCHA, OTP or robust IP-based rate limiting is provided. Apps Script and Sheets quotas apply.
