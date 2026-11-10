@@ -7,7 +7,7 @@ The Worker receives public interest submissions and exposes owner-authenticated 
 Install Node.js. From this folder run:
 
 ```powershell
-npm install --save-dev wrangler
+npm install
 npx wrangler login
 npx wrangler d1 create proddatur-pulse
 ```
