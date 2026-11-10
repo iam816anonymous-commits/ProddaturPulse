@@ -112,18 +112,18 @@ function setupDashboard_(ss) {
     ["Last refreshed",""]
   ]);
   sheet.getRange("B4").setFormula('=COUNTA(Registrations!B2:B)');
-  sheet.getRange("B5").setFormula('=COUNTUNIQUE(FILTER(Registrations!B2:B,Registrations!B2:B<>""))');
+  sheet.getRange("B5").setFormula('=IFERROR(COUNTUNIQUE(FILTER(Registrations!B2:B,Registrations!B2:B<>"")),0)');
   sheet.getRange("B6").setFormula('=COUNTIF(Requests!E2:E,"New")');
   sheet.getRange("B7").setFormula('=COUNTIF(Registrations!K2:K,TRUE)');
   sheet.getRange("B8").setFormula("=NOW()");
   sheet.getRange("A10:B10").setValues([["Demand by interest","Registrations"]]);
   sheet.getRange("A11").setFormula('=IFERROR(QUERY(ARRAYFORMULA(TRIM(FLATTEN(SPLIT(TEXTJOIN(",",TRUE,Registrations!F2:F),",")))),"select Col1,count(Col1) where Col1 is not null group by Col1 order by count(Col1) desc label Col1 \'Interest\', count(Col1) \'Registrations\'",0),"No registrations yet")');
   sheet.getRange("D10:E10").setValues([["Demand by area","Registrations"]]);
-  sheet.getRange("D11").setFormula('=IFERROR(QUERY(Registrations!E2:E,"select E,count(E) where E is not null group by E order by count(E) desc label E \'Area\', count(E) \'Registrations\'",0),"No area data yet")');
+  sheet.getRange("D11").setFormula('=IFERROR(QUERY(Registrations!E2:E,"select Col1,count(Col1) where Col1 is not null group by Col1 order by count(Col1) desc label Col1 \'Area\', count(E) \'Registrations\'",0),"No area data yet")');
   sheet.getRange("G10:H10").setValues([["Willingness to pay","Registrations"]]);
-  sheet.getRange("G11").setFormula('=IFERROR(QUERY(Registrations!H2:H,"select H,count(H) where H is not null group by H order by count(H) desc label H \'Price range\', count(H) \'Registrations\'",0),"No pricing data yet")');
+  sheet.getRange("G11").setFormula('=IFERROR(QUERY(Registrations!H2:H,"select Col1,count(Col1) where Col1 is not null group by Col1 order by count(Col1) desc label Col1 \'Price range\', count(H) \'Registrations\'",0),"No pricing data yet")');
   sheet.getRange("J10:K10").setValues([["Usage timeline","Registrations"]]);
-  sheet.getRange("J11").setFormula('=IFERROR(QUERY(Registrations!G2:G,"select G,count(G) where G is not null group by G order by count(G) desc label G \'Timeline\', count(G) \'Registrations\'",0),"No timeline data yet")');
+  sheet.getRange("J11").setFormula('=IFERROR(QUERY(Registrations!G2:G,"select Col1,count(Col1) where Col1 is not null group by Col1 order by count(Col1) desc label Col1 \'Timeline\', count(G) \'Registrations\'",0),"No timeline data yet")');
   ["A3:B3","A10:B10","D10:E10","G10:H10","J10:K10"].forEach(r=>sheet.getRange(r).setFontWeight("bold").setBackground("#d9f36b"));
   sheet.setFrozenRows(3);
   sheet.autoResizeColumns(1,11);
