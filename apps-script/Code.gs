@@ -59,7 +59,9 @@ function saveRegistration_(d) {
       const match = sheet.getRange(2,2,lastRow-1,1).createTextFinder(phone).matchEntireCell(true).useRegularExpression(false).findNext();
       if (match) return {ok:false,code:"duplicate",message:"This mobile number has already registered. Only one registration per mobile number is allowed."};
     }
-    const nextRow = sheet.getLastRow() + 1;\n    sheet.getRange(nextRow,2).setNumberFormat("@");\n    sheet.appendRow([new Date(),phone,safeCell_(name),age,safeCell_(area),interests.join(", "),timeline,willingness,safeCell_(suggestion),true,d.marketing_updates === true]);
+    const nextRow = sheet.getLastRow() + 1;
+    sheet.getRange(nextRow,2).setNumberFormat("@");
+    sheet.appendRow([new Date(),phone,safeCell_(name),age,safeCell_(area),interests.join(", "),timeline,willingness,safeCell_(suggestion),true,d.marketing_updates === true]);
     return {ok:true,code:"created",message:"Thank you. Your interest has been received successfully."};
   } finally {
     lock.releaseLock();
