@@ -1,23 +1,26 @@
 # Proddatur Pulse
 
-Public Proddatur interest survey hosted on GitHub Pages. Anonymous visitors can submit without a Google account. Submissions are stored in the owner's private Google Sheet through Google Apps Script.
+Public local demand-discovery survey for Proddatur, Andhra Pradesh. Hosted on GitHub Pages; anonymous submissions are stored in the owner's private Google Sheet through Google Apps Script.
 
-## Architecture
+## Main files
+- index.html — public landing page and adult-only interest registration.
+- privacy.html — privacy policy and independent question/privacy request form.
+- apps-script/Code.gs — registration intake, separate request intake and private owner dashboard setup.
+- sitemap.xml and robots.txt — search discovery.
+- docs/OWNER_OPERATIONS.md — private owner workflow.
+- docs/GOOGLE_SHEETS_SETUP.md — Apps Script deployment and setup.
 
-- `index.html` — public landing page and interest form.
-- `apps-script/Code.gs` — Google Apps Script intake endpoint.
-- `apps-script/appsscript.json` — Apps Script runtime manifest.
-- `docs/GOOGLE_SHEETS_SETUP.md` — setup, deployment and testing guide.
-- Google Sheet — private registration store, owned by the site operator.
+## Data handling
+- One registration per normalized 10-digit Indian mobile number. Duplicate check and append run under a script lock.
+- Questions and privacy requests are written to a separate Requests tab. They do not create registrations and are not blocked by the duplicate rule.
+- Public site does not expose or link to the private spreadsheet.
+- Registration is for adults aged 18 and above.
 
-## Duplicate prevention
+## Owner setup
+Replace the Apps Script editor code with apps-script/Code.gs, confirm the configured spreadsheet ID, run setupSheet once, then edit the existing Web App deployment and deploy a new version. This creates/prepares Registrations, Requests and Dashboard tabs. Follow docs/OWNER_OPERATIONS.md.
 
-One registration per normalized 10-digit Indian mobile number. A repeated number is rejected, and the sheet is not given a second row. The duplicate check and append run under a script lock to prevent concurrent duplicate inserts. This is not identity verification; another phone number can bypass the rule.
+## Security limitations
+The endpoint is public by design. Script locking protects concurrent duplicate registration writes; it is not CAPTCHA, OTP or robust rate limiting. Keep spreadsheet access restricted. Never publish registration data or verification secrets.
 
-## Setup
-
-Follow [the Google Sheets setup guide](docs/GOOGLE_SHEETS_SETUP.md). Deploy Apps Script as a Web App that executes as the owner and is accessible to anyone. Keep the spreadsheet itself private.
-
-## Important
-
-The site is not ready to collect real registrations until the owner completes Apps Script authorization/deployment and adds the `/exec` URL and private Sheet URL to `index.html`. Never put a Google password, OAuth token or spreadsheet data in this repository.
+## Google indexing
+Submit https://iam816anonymous-commits.github.io/ProddaturPulse/sitemap.xml in Google Search Console after verifying the URL-prefix property. Sitemap submission is a discovery hint, not a guarantee of indexing.
