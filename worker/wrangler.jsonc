@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "proddatur-pulse-api",
+  "main": "src/index.js",
+  "compatibility_date": "2026-11-10",
+  "workers_dev": true,
+  "vars": { "ALLOWED_ORIGIN": "https://iam816anonymous-commits.github.io" },
+  "d1_databases": [{
+    "binding": "DB",
+    "database_name": "proddatur-pulse",
+    "database_id": "REPLACE_WITH_DATABASE_ID",
+    "migrations_dir": "migrations"
+  }]
+}
