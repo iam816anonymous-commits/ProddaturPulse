@@ -11,7 +11,7 @@ export default {
       if (origin !== allowedOrigin) return new Response(null, { status: 403 });
       return new Response(null, { status: 204, headers: corsHeaders(origin) });
     }
-    if (!allowedOrigin || origin !== allowedOrigin) return json({ error: "Origin not allowed" }, 403, origin);
+    if (!allowedOrigin || origin !== allowedOrigin) return new Response(JSON.stringify({ error: "Origin not allowed" }), { status: 403, headers: JSON_HEADERS });
     if (!env.DB || !env.ADMIN_PASSWORD || !env.SESSION_SECRET) return json({ error: "Service is not configured" }, 503, origin);
     const url = new URL(request.url);
     try {
