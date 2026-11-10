@@ -14,8 +14,11 @@
 <meta property="og:title" content="Privacy Policy | Proddatur Pulse">
 <meta property="og:description" content="How Proddatur Pulse handles information submitted through its local interest survey.">
 <meta property="og:url" content="https://iam816anonymous-commits.github.io/ProddaturPulse/privacy.html">
+<meta property="og:image" content="https://iam816anonymous-commits.github.io/ProddaturPulse/social-preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://iam816anonymous-commits.github.io/ProddaturPulse/social-preview.png">
 <style>
-:root{--g:#123b32;--bg:#f5f7f1;--muted:#65736d;--line:#dce5dc}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#182b26;font:16px/1.65 system-ui,Arial}.wrap{max-width:820px;width:calc(100% - 32px);margin:auto}header{padding:22px 0;display:flex;justify-content:space-between;gap:16px;align-items:center}.brand{font-weight:850;font-size:20px;color:var(--g);text-decoration:none}.back{color:var(--g);font-weight:700}.paper{background:white;border:1px solid var(--line);border-radius:20px;padding:clamp(22px,5vw,42px);margin:35px auto}h1{font-size:clamp(34px,6vw,48px);line-height:1.08;letter-spacing:-.05em;margin:0 0 12px}h2{font-size:21px;margin:28px 0 8px;color:var(--g)}p,li{color:#42534c}.muted{color:var(--muted);font-size:13px}.notice{background:#f0f5ed;padding:14px;border-radius:10px}footer{padding:20px 0 35px;color:var(--muted);font-size:13px}
+:root{--g:#123b32;--bg:#f5f7f1;--muted:#65736d;--line:#dce5dc}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#182b26;font:16px/1.65 system-ui,Arial}.wrap{max-width:820px;width:calc(100% - 32px);margin:auto}header{padding:22px 0;display:flex;justify-content:space-between;gap:16px;align-items:center}.brand{font-weight:850;font-size:20px;color:var(--g);text-decoration:none}.back{color:var(--g);font-weight:700}.paper{background:white;border:1px solid var(--line);border-radius:20px;padding:clamp(22px,5vw,42px);margin:35px auto}h1{font-size:clamp(34px,6vw,48px);line-height:1.08;letter-spacing:-.05em;margin:0 0 12px}h2{font-size:21px;margin:28px 0 8px;color:var(--g)}p,li{color:#42534c}.muted{color:var(--muted);font-size:13px}.notice{background:#f0f5ed;padding:14px;border-radius:10px}footer{padding:20px 0 35px;color:var(--muted);font-size:13px}.request-form{background:#f5f7f1;border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:15px}.request-form label{display:block;font-weight:700;font-size:13px;margin:12px 0 5px}.request-form input,.request-form select,.request-form textarea{font:inherit;width:100%;padding:11px;border:1px solid var(--line);border-radius:8px;background:#fff}.request-form button{margin-top:14px;background:var(--g);color:white;border:0;border-radius:8px;padding:12px 17px;font-weight:700;cursor:pointer}.request-form button:disabled{opacity:.6}.form-status{padding:11px;border-radius:8px;margin-top:12px;display:none}.form-status.ok{display:block;background:#e8f5e6;color:#24552d}.form-status.err{display:block;background:#fff0ed;color:#8b3024}
 </style>
 </head>
 <body>
@@ -54,16 +57,68 @@
 <p>The required consent allows us to store your submission and contact you about the interests you selected. The optional updates checkbox is separate. You can ask us to stop optional updates or withdraw consent by sending a request through the form. Withdrawal does not affect processing already carried out, and some information may need to be retained where legally required.</p>
 
 <h2>7. Children</h2>
-<p>The survey includes an age-group option for people under 18. If you are under 18, please complete the survey only with the involvement and permission of a parent or legal guardian.</p>
+<p>The current survey is intended for adults aged 18 and above. The registration form does not accept under-18 registrations.</p>
 
 <h2>8. Security and limitations</h2>
 <p>We use access restrictions on the private spreadsheet and basic validation and duplicate checks in the submission process. However, the public intake endpoint can be accessed by anyone and no internet transmission or storage system can be guaranteed completely secure. Do not submit sensitive personal information.</p>
 
 <h2>9. Questions and privacy requests</h2>
-<p>There is no separate public email address at this time. Use the questions/suggestions field on the <a href="./#register">Proddatur Pulse survey form</a> to contact the project operator about this policy, your registration, or a privacy request. Include enough information for us to identify the submission without sending identity documents or other sensitive records.</p>
+<p>Use this separate form to ask a question or request access to, correction of, or deletion of a previous registration. It does not create a second registration and is not blocked by the one-registration-per-mobile-number rule. Enter the same mobile number you used when registering. We may verify control of that number before acting. Do not send identity documents or sensitive information.</p>
+<div class="request-form">
+<form id="requestForm">
+<label for="requestPhone">Registered 10-digit mobile number</label>
+<input id="requestPhone" type="tel" inputmode="numeric" maxlength="10" pattern="[6-9][0-9]{9}" required placeholder="10-digit Indian mobile number">
+<label for="requestType">What do you need?</label>
+<select id="requestType" required>
+<option value="Question">Ask a question</option><option value="Suggestion">Send a suggestion</option><option value="Access my data">Access my data</option><option value="Correct my data">Correct my data</option><option value="Delete my data">Delete my data</option><option value="Stop optional updates">Stop optional updates</option>
+</select>
+<label for="requestMessage">Message</label>
+<textarea id="requestMessage" rows="4" maxlength="1000" required placeholder="Explain your question or request."></textarea>
+<input id="requestWebsite" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-10000px;width:1px;height:1px">
+<button id="requestSubmit" type="submit">Send request</button>
+<p class="muted">Your message is stored in a separate private Requests tab for the project operator to review.</p>
+<div id="requestStatus" class="form-status" role="status"></div>
+</form>
+</div>
 
 <p class="notice"><strong>Important:</strong> Proddatur Pulse is a local interest survey, not a live service provider, booking platform or payment service. A response to the survey does not create a contract or guarantee a service.</p>
 </main>
 <footer class="wrap">© 2026 Proddatur Pulse · <a href="./">Return to the survey</a></footer>
+
+<script>
+const REQUEST_ENDPOINT="https://script.google.com/macros/s/AKfycbw5hzXcfCJ05lx72lNGAKaRxmLVMHzj5Dyj23C5UoPsNOSH6RN76-4tEuIJeR16DxFZ/exec";
+const requestForm=document.getElementById("requestForm");
+const requestStatus=document.getElementById("requestStatus");
+const requestButton=document.getElementById("requestSubmit");
+function requestStatusMessage(message,kind){requestStatus.textContent=message;requestStatus.className="form-status "+kind;}
+function postRequest(payload){
+ return new Promise((resolve,reject)=>{
+  const nonce=crypto.randomUUID(), frame=document.createElement("iframe"), form=document.createElement("form");
+  frame.name="pp-request-"+nonce;frame.hidden=true;frame.title="Privacy request submission";
+  form.method="POST";form.action=REQUEST_ENDPOINT;form.target=frame.name;form.hidden=true;
+  const fields={payload:JSON.stringify(payload),nonce};
+  Object.entries(fields).forEach(([name,value])=>{const input=document.createElement("input");input.type="hidden";input.name=name;input.value=value;form.append(input);});
+  document.body.append(frame,form);
+  let settled=false;
+  const cleanup=()=>{window.removeEventListener("message",onMessage);form.remove();frame.remove();clearTimeout(timer);};
+  const finish=(fn,value)=>{if(settled)return;settled=true;cleanup();fn(value);};
+  const onMessage=(event)=>{const data=event.data;if(!data||data.type!=="PRODDATUR_PULSE_RESULT"||data.nonce!==nonce)return;if(data.result&&data.result.ok)finish(resolve,data.result);else finish(reject,new Error(data.result?.message||"Request could not be submitted."));};
+  window.addEventListener("message",onMessage);
+  const timer=setTimeout(()=>finish(reject,new Error("No confirmation received. Check your connection and try again.")),30000);
+  form.submit();
+ });
+}
+requestForm.addEventListener("submit",async event=>{
+ event.preventDefault();requestStatus.className="form-status";requestButton.disabled=true;requestButton.textContent="Sending…";
+ const phone=document.getElementById("requestPhone").value.trim();
+ const message=document.getElementById("requestMessage").value.trim();
+ if(!/^[6-9][0-9]{9}$/.test(phone)||message.length<3){requestStatusMessage("Enter a valid mobile number and a message.","err");requestButton.disabled=false;requestButton.textContent="Send request";return;}
+ try{
+  const result=await postRequest({type:"request",phone,request_type:document.getElementById("requestType").value,message,website:document.getElementById("requestWebsite").value});
+  requestForm.reset();requestStatusMessage(result.message,"ok");
+ }catch(error){requestStatusMessage(error.message||"Could not send request. Try again.","err");}
+ finally{requestButton.disabled=false;requestButton.textContent="Send request";}
+});
+</script>
 </body>
 </html>
